@@ -98,7 +98,7 @@ class ViewAllAttendanceState extends State<ViewAllAttendance> {
                   focusedDay: DateTime.now(),
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
 
-                  headerStyle: HeaderStyle(
+                  headerStyle: const HeaderStyle(
                     formatButtonVisible: false,
                     leftChevronIcon: Icon(
                       Icons.chevron_left,
@@ -108,7 +108,7 @@ class ViewAllAttendanceState extends State<ViewAllAttendance> {
                       Icons.chevron_right,
                     ),
                   ),
-                  weekendDays: [
+                  weekendDays: const [
                     DateTime.sunday,
                     DateTime.saturday,
                   ],

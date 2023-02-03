@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/attendance_model.dart';
+
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({Key? key}) : super(key: key);
 
@@ -19,6 +21,51 @@ class _DashBoardPageState extends State<DashBoardPage> {
   String timeIn = '', timeOut = '';
   bool isButtonClickable = true;
   bool noButtonClickable = true;
+  var getInTime;
+  var getOutTime;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getEventsList();
+  }
+
+  List<AttendanceModel> attendanceList = [];
+  DateTime _focusedDay = DateTime.now();
+
+  var currentDateTimeIn;
+  var currentDateTimeOut;
+
+  getEventsList() async {
+    CollectionReference _collectionRef =
+        FirebaseFirestore.instance.collection('attendance');
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+
+    final allData = querySnapshot.docs
+        .map((attendance) => AttendanceModel(
+              date: attendance['Date'],
+              timeIn: attendance['Time_In'],
+              timeOut: attendance['Time_Out'],
+            ))
+        .toList();
+
+    setState(() {
+      attendanceList = allData;
+    });
+
+    var currentDate = _focusedDay.day.toString() +
+        DateFormat(' MMMM yyyy').format(_focusedDay);
+
+    currentDateTimeIn = attendanceList
+        .firstWhereOrNull((element) => element.date == currentDate)
+        ?.timeIn;
+    currentDateTimeOut = attendanceList
+        .firstWhereOrNull((element) => element.date == currentDate)
+        ?.timeOut;
+
+    print('time in out : $currentDateTimeIn  : ${currentDateTimeOut}');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +90,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 alignment: Alignment.centerLeft,
                 child: Text('User Id : ${data[0]['1']}',
-                    style:
-                        const TextStyle(fontWeight: FontWeight.w500, fontSize: 16))),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w500, fontSize: 16))),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
               child: Container(
@@ -73,7 +120,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           style: TextStyle(fontSize: 22, color: Colors.black45),
                         ),
                         Text(
-                          timeIn.isNotEmpty ? timeIn : '--/--',
+                          currentDateTimeIn ?? "--/--",
                           style: TextStyle(fontSize: 20),
                         ),
                       ],
@@ -88,7 +135,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           style: TextStyle(fontSize: 22, color: Colors.black45),
                         ),
                         Text(
-                          timeOut.isEmpty ? '--/--' : timeOut,
+                          currentDateTimeOut ?? '--/--',
                           style: TextStyle(fontSize: 20),
                         ),
                       ],
@@ -131,19 +178,20 @@ class _DashBoardPageState extends State<DashBoardPage> {
             const SizedBox(height: 50.0),
             Center(
               child: InkWell(
-                onTap: noButtonClickable?() {
+                onTap: noButtonClickable
+                    ? () {
+                        setState(() {
+                          noButtonClickable = false;
+                          createStartTime();
 
-                    setState(() {
-                      noButtonClickable = false;
-                      createStartTime();
-
-                      Get.snackbar("Success", "Welcome ",
-                          snackPosition: SnackPosition.BOTTOM);
-                    });
-
-                }:(){
-                  Get.snackbar("Sorry!", 'Only One Time Click');
-                } ,
+                          getEventsList();
+                          Get.snackbar("Success", "Welcome ",
+                              snackPosition: SnackPosition.BOTTOM);
+                        });
+                      }
+                    : () {
+                        Get.snackbar("Sorry!", 'Only One Time Click');
+                      },
                 child: Container(
                   decoration: BoxDecoration(
                       color: Colors.purple,
@@ -168,29 +216,31 @@ class _DashBoardPageState extends State<DashBoardPage> {
             const SizedBox(height: 32.0),
             Center(
               child: InkWell(
-                onTap: isButtonClickable?() {
+                onTap: isButtonClickable
+                    ? () {
+                        setState(() {
+                          createEndTime();
+                          isButtonClickable = false;
 
-                    setState(() {
-                      createEndTime();
-                      isButtonClickable = false;
-                      Map<String, String> dataToSave = {
-                        'Time_In': timeIn,
-                        'Time_Out': timeOut.toString(),
-                        'Date': DateTime.now().day.toString() +
-                            DateFormat(' MMMM yyyy').format(DateTime.now()),
-                      };
+                          getEventsList();
+                          Map<String, String> dataToSave = {
+                            'Time_In': timeIn,
+                            'Time_Out': timeOut.toString(),
+                            'Date': DateTime.now().day.toString() +
+                                DateFormat(' MMMM yyyy').format(DateTime.now()),
+                          };
 
-                      FirebaseFirestore.instance
-                          .collection("attendance")
-                          .add(dataToSave);
+                          FirebaseFirestore.instance
+                              .collection("attendance")
+                              .add(dataToSave);
 
-                      Get.snackbar("Success", "Good By ",
-                          snackPosition: SnackPosition.BOTTOM);
-                    });
-
-                } : (){
-                  Get.snackbar("Sorry!", 'You Already Clicked ');
-                },
+                          Get.snackbar("Success", "Good By ",
+                              snackPosition: SnackPosition.BOTTOM);
+                        });
+                      }
+                    : () {
+                        Get.snackbar("Sorry!", 'You Already Clicked ');
+                      },
                 child: Container(
                   decoration: BoxDecoration(
                       color: Colors.purple,

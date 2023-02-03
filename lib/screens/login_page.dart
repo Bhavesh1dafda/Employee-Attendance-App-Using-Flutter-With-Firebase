@@ -17,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController =
       TextEditingController(text: 'dbhavesh101@gmail.com');
   final TextEditingController _passwordController =
-      TextEditingController(text: '57505750');
+      TextEditingController(text: '78787878');
   late SharedPreferences sharedPreferences;
 
   @override
