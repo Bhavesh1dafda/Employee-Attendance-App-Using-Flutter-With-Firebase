@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +14,6 @@ class ViewAllAttendance extends StatefulWidget {
 }
 
 class ViewAllAttendanceState extends State<ViewAllAttendance> {
-
   final Stream<QuerySnapshot> eventsStream =
       FirebaseFirestore.instance.collection('attendance').snapshots();
   DateTime _focusedDay = DateTime.now();
@@ -34,8 +32,6 @@ class ViewAllAttendanceState extends State<ViewAllAttendance> {
     });
   }
 
-
-
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
@@ -49,21 +45,20 @@ class ViewAllAttendanceState extends State<ViewAllAttendance> {
   }
 
   getEventsList() async {
-    CollectionReference _collectionRef =
+    CollectionReference attendance =
         FirebaseFirestore.instance.collection('attendance');
-    QuerySnapshot querySnapshot = await _collectionRef.get();
+    QuerySnapshot querySnapshot = await attendance.get();
 
-    final allData = querySnapshot.docs
-        .map((attendance) => AttendanceModel(
-              date: attendance['Date'],
-              timeIn: attendance['Time_In'],
-              timeOut: attendance['Time_Out'],
-            ))
-        .toList();
+    for (var element in querySnapshot.docs) {
+      AttendanceModel attendanceModel = AttendanceModel();
+      attendanceModel.date = element["Date"];
+      attendanceModel.timeIn = element["Time_In"];
+      attendanceModel.timeOut = element["Time_Out"];
 
-    setState(() {
-      attendanceList = allData;
-    });
+      setState(() {
+        attendanceList.add(attendanceModel);
+      });
+    }
 
     var currentDate = _selectedDay!.day.toString() +
         DateFormat(' MMMM yyyy').format(_selectedDay!);
@@ -83,7 +78,7 @@ class ViewAllAttendanceState extends State<ViewAllAttendance> {
         title: Text("Mothly Attendance Report"),
         centerTitle: true,
       ),
-      body: StreamBuilder<Object>(
+      body: StreamBuilder(
         stream: eventsStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -95,9 +90,8 @@ class ViewAllAttendanceState extends State<ViewAllAttendance> {
                 child: TableCalendar<Event>(
                   firstDay: DateTime.utc(2010, 10, 16),
                   lastDay: DateTime.utc(2030, 3, 14),
-                  focusedDay: DateTime.now(),
+                  focusedDay: _focusedDay,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-
                   headerStyle: const HeaderStyle(
                     formatButtonVisible: false,
                     leftChevronIcon: Icon(
@@ -118,10 +112,14 @@ class ViewAllAttendanceState extends State<ViewAllAttendance> {
               ),
               const SizedBox(height: 8),
               ListTile(
-                title: Text(currentDateTimeIn == null ?  "No Data Available": "Time In : "+ currentDateTimeIn.toString() ),
+                title: Text(currentDateTimeIn == null
+                    ? "No Data Available"
+                    : "Time In : " + currentDateTimeIn.toString()),
               ),
               ListTile(
-                title: Text(currentDateTimeOut == null ? "No Data Available": "Time Out : "+ currentDateTimeOut.toString()),
+                title: Text(currentDateTimeOut == null
+                    ? "No Data Available"
+                    : "Time Out : " + currentDateTimeOut.toString()),
               ),
             ],
           );

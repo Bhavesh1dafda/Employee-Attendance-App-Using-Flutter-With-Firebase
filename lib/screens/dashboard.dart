@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/attendance_model.dart';
 
@@ -38,21 +37,20 @@ class _DashBoardPageState extends State<DashBoardPage> {
   var currentDateTimeOut;
 
   getEventsList() async {
-    CollectionReference _collectionRef =
+    CollectionReference attendance =
         FirebaseFirestore.instance.collection('attendance');
-    QuerySnapshot querySnapshot = await _collectionRef.get();
+    QuerySnapshot querySnapshot = await attendance.get();
 
-    final allData = querySnapshot.docs
-        .map((attendance) => AttendanceModel(
-              date: attendance['Date'],
-              timeIn: attendance['Time_In'],
-              timeOut: attendance['Time_Out'],
-            ))
-        .toList();
+    for (var element in querySnapshot.docs) {
+      AttendanceModel attendanceModel = AttendanceModel();
+      attendanceModel.date = element["Date"];
+      attendanceModel.timeIn = element["Time_In"];
+      attendanceModel.timeOut = element["Time_Out"];
 
-    setState(() {
-      attendanceList = allData;
-    });
+      setState(() {
+        attendanceList.add(attendanceModel);
+      });
+    }
 
     var currentDate = _focusedDay.day.toString() +
         DateFormat(' MMMM yyyy').format(_focusedDay);
@@ -63,14 +61,13 @@ class _DashBoardPageState extends State<DashBoardPage> {
     currentDateTimeOut = attendanceList
         .firstWhereOrNull((element) => element.date == currentDate)
         ?.timeOut;
-
-    print('time in out : $currentDateTimeIn  : ${currentDateTimeOut}');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Welcome'),
       ),
       body: SingleChildScrollView(
@@ -118,7 +115,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         const Text(
                           'Time In',
                           style: TextStyle(fontSize: 22, color: Colors.black45),
-                        ),
+                        ), SizedBox(height: 5,),
                         Text(
                           currentDateTimeIn ?? "--/--",
                           style: TextStyle(fontSize: 20),
@@ -134,6 +131,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           'Time Out',
                           style: TextStyle(fontSize: 22, color: Colors.black45),
                         ),
+                        SizedBox(height: 5,),
                         Text(
                           currentDateTimeOut ?? '--/--',
                           style: TextStyle(fontSize: 20),
@@ -190,7 +188,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         });
                       }
                     : () {
+
                         Get.snackbar("Sorry!", 'Only One Time Click');
+
                       },
                 child: Container(
                   decoration: BoxDecoration(

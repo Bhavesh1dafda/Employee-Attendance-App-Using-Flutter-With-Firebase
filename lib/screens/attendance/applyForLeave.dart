@@ -173,7 +173,7 @@ class _ApplyForLeaveState extends State<ApplyForLeave> {
                   style: TextStyle(fontSize: 20),
                 )),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal:15.0,vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal:15.0,vertical: 10),
               child: TextField(controller: reasoncontroller,
                   decoration: InputDecoration(
                     border: myinputborder(), //normal border
@@ -183,6 +183,7 @@ class _ApplyForLeaveState extends State<ApplyForLeave> {
                   )),
             ), SizedBox(height: 15,),
             Container(
+
                 padding: EdgeInsets.symmetric(horizontal: 15),
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -190,7 +191,7 @@ class _ApplyForLeaveState extends State<ApplyForLeave> {
                   style: TextStyle(fontSize: 20),
                 )),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal:15.0,vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal:15.0,vertical: 10),
               child: TextField(controller: notecontroller,
 
                   decoration: InputDecoration(
@@ -200,7 +201,7 @@ class _ApplyForLeaveState extends State<ApplyForLeave> {
                     // set more border style like disabledBorder
                   )),
             ), SizedBox(
-              height: 70,
+              height: 80,
             ),
             Container(
               height: 50,

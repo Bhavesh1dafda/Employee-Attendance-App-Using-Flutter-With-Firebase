@@ -83,7 +83,7 @@ class _EditProfileState extends State<EditProfile> {
   Future<void> downloadURLExample() async {
     downloadURL = await FirebaseStorage.instance
         .ref("images")
-        .child("profile.jpeg")
+        .child("01-shutterstock_476340928-Irina-Bg.jpg")
         .getDownloadURL();
     debugPrint(downloadURL.toString());
   }
