@@ -45,121 +45,127 @@ class _ApplyForLeaveState extends State<ApplyForLeave> {
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Row(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "From Date",
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w600),
-                          )),
-                      Container(
-                          height: 50,
-                          width: 150,
-                          child: Center(
-                              child: TextField(
-                                controller: fromdatecontroller,
-                                //editing controller of this TextField
-                                decoration: InputDecoration(
-                                    icon: Icon(
-                                      Icons.calendar_today,
-                                      size: 20,
-                                    ),
-                                    //icon of text field
-                                    labelText: "Enter Date",
-                                    labelStyle:
-                                    TextStyle(fontSize: 20) //label text of field
-                                ),
-                                readOnly: true,
-                                //set it true, so that user will not able to edit text
-                                onTap: () async {
-                                  DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2000),
-                                    //DateTime.now() - not to allow to choose before today.
-                                    lastDate: DateTime(2101),
-                                  );
+                  Expanded(
+                    flex: 50,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "From Date",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w600),
+                            )),
+                        Container(
+                            height: 50,
+                            width: 150,
+                            child: Center(
+                                child: TextField(
+                                  controller: fromdatecontroller,
+                                  //editing controller of this TextField
+                                  decoration: InputDecoration(
+                                      icon: Icon(
+                                        Icons.calendar_today,
+                                        size: 20,
+                                      ),
+                                      //icon of text field
+                                      labelText: "Enter Date",
+                                      labelStyle:
+                                      TextStyle(fontSize: 20) //label text of field
+                                  ),
+                                  readOnly: true,
+                                  //set it true, so that user will not able to edit text
+                                  onTap: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(2000),
+                                      //DateTime.now() - not to allow to choose before today.
+                                      lastDate: DateTime(2101),
+                                    );
 
-                                  if (pickedDate != null) {
-                                    print(
-                                        pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                                    String formattedDate =
-                                    DateFormat('dd-MM-yyyy').format(pickedDate);
-                                    print(
-                                        formattedDate); //formatted date output using intl package =>  2021-03-16
-                                    //you can implement different kind of Date Format here according to your requirement
+                                    if (pickedDate != null) {
+                                      print(
+                                          pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                      String formattedDate =
+                                      DateFormat('dd-MM-yyyy').format(pickedDate);
+                                      print(
+                                          formattedDate); //formatted date output using intl package =>  2021-03-16
+                                      //you can implement different kind of Date Format here according to your requirement
 
-                                    setState(() {
-                                      fromdatecontroller.text =
-                                          formattedDate; //set output date to TextField value.
-                                    });
-                                  } else {
-                                    print("Date is not selected");
-                                  }
-                                },
-                              ))),
-                    ],
+                                      setState(() {
+                                        fromdatecontroller.text =
+                                            formattedDate; //set output date to TextField value.
+                                      });
+                                    } else {
+                                      print("Date is not selected");
+                                    }
+                                  },
+                                ))),
+                      ],
+                    ),
                   ),
                   SizedBox(
                     width: 20,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "To Date",
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w600),
-                          )),
-                      Container(
-                          height: 50,
-                          width: 150,
-                          child: Center(
-                              child: TextField(
-                                controller: todatecontroller,
-                                //editing controller of this TextField
-                                decoration: InputDecoration(
-                                    icon: Icon(
-                                      Icons.calendar_today,
-                                      size: 20,
-                                    ),
-                                    //icon of text field
-                                    labelText: "Enter Date",
-                                    labelStyle:
-                                    TextStyle(fontSize: 20) //label text of field
-                                ),
-                                readOnly: true,
-                                //set it true, so that user will not able to edit text
-                                onTap: () async {
-                                  DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2000),
-                                    //DateTime.now() - not to allow to choose before today.
-                                    lastDate: DateTime(2101),
-                                  );
+                  Expanded(
+                    flex: 50,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "To Date",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w600),
+                            )),
+                        Container(
+                            height: 50,
+                            width: 150,
+                            child: Center(
+                                child: TextField(
+                                  controller: todatecontroller,
+                                  //editing controller of this TextField
+                                  decoration: InputDecoration(
+                                      icon: Icon(
+                                        Icons.calendar_today,
+                                        size: 20,
+                                      ),
+                                      //icon of text field
+                                      labelText: "Enter Date",
+                                      labelStyle:
+                                      TextStyle(fontSize: 20) //label text of field
+                                  ),
+                                  readOnly: true,
+                                  //set it true, so that user will not able to edit text
+                                  onTap: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(2000),
+                                      //DateTime.now() - not to allow to choose before today.
+                                      lastDate: DateTime(2101),
+                                    );
 
-                                  if (pickedDate != null) {
+                                    if (pickedDate != null) {
 
-                                    String formattedDate =
-                                    DateFormat('dd-MM-yyyy').format(pickedDate);
+                                      String formattedDate =
+                                      DateFormat('dd-MM-yyyy').format(pickedDate);
 
 
-                                    setState(() {
-                                      todatecontroller.text =
-                                          formattedDate; //set output date to TextField value.
-                                    });
-                                  } else {
-                                    print("Date is not selected");
-                                  }
-                                },
-                              ))),
-                    ],
+                                      setState(() {
+                                        todatecontroller.text =
+                                            formattedDate; //set output date to TextField value.
+                                      });
+                                    } else {
+                                      print("Date is not selected");
+                                    }
+                                  },
+                                ))),
+                      ],
+                    ),
                   ),
                 ],
               ),

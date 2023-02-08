@@ -40,7 +40,7 @@ class ViewAllAttendanceState extends State<ViewAllAttendance> {
         getEventsList();
       });
 
-      // _selectedEvents.value = _getEventsForDay(selectedDay);
+
     }
   }
 
@@ -78,56 +78,58 @@ class ViewAllAttendanceState extends State<ViewAllAttendance> {
         title: Text("Mothly Attendance Report"),
         centerTitle: true,
       ),
-      body: StreamBuilder(
-        stream: eventsStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            // List<CalendarItemData
-          }
-          return Column(
-            children: [
-              Card(
-                child: TableCalendar<Event>(
-                  firstDay: DateTime.utc(2010, 10, 16),
-                  lastDay: DateTime.utc(2030, 3, 14),
-                  focusedDay: _focusedDay,
-                  holidayPredicate: (day) {
-                    // Weekends
-                    return day.weekday >= 6;
-                  },
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  headerStyle: const HeaderStyle(
-                    formatButtonVisible: false,
-                    leftChevronIcon: Icon(
-                      Icons.chevron_left,
+      body: SingleChildScrollView(
+        child: StreamBuilder(
+          stream: eventsStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              // List<CalendarItemData
+            }
+            return Column(
+              children: [
+                Card(
+                  child: TableCalendar<AttendanceModel>(
+                    firstDay: DateTime.utc(2010, 10, 16),
+                    lastDay: DateTime.utc(2030, 3, 14),
+                    focusedDay: _focusedDay,
+                    holidayPredicate: (day) {
+                      // Weekends
+                      return day.weekday >= 6;
+                    },
+                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                    headerStyle: const HeaderStyle(
+                      formatButtonVisible: false,
+                      leftChevronIcon: Icon(
+                        Icons.chevron_left,
+                      ),
+                      titleCentered: true,
+                      rightChevronIcon: Icon(
+                        Icons.chevron_right,
+                      ),
                     ),
-                    titleCentered: true,
-                    rightChevronIcon: Icon(
-                      Icons.chevron_right,
-                    ),
+                    weekendDays: const [
+                      DateTime.sunday,
+                      DateTime.saturday,
+                    ],
+                    startingDayOfWeek: StartingDayOfWeek.monday,
+                    onDaySelected: _onDaySelected,
                   ),
-                  weekendDays: const [
-                    DateTime.sunday,
-                    DateTime.saturday,
-                  ],
-                  startingDayOfWeek: StartingDayOfWeek.monday,
-                  onDaySelected: _onDaySelected,
                 ),
-              ),
-              const SizedBox(height: 8),
-              ListTile(
-                title: Text(currentDateTimeIn == null
-                    ? "No Data Available"
-                    : "Time In : " + currentDateTimeIn.toString()),
-              ),
-              ListTile(
-                title: Text(currentDateTimeOut == null
-                    ? "No Data Available"
-                    : "Time Out : " + currentDateTimeOut.toString()),
-              ),
-            ],
-          );
-        },
+                const SizedBox(height: 8),
+                ListTile(
+                  title: Text(currentDateTimeIn == null
+                      ? "No Data Available"
+                      : "Time In : " + currentDateTimeIn.toString()),
+                ),
+                ListTile(
+                  title: Text(currentDateTimeOut == null
+                      ? "No Data Available"
+                      : "Time Out : " + currentDateTimeOut.toString()),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

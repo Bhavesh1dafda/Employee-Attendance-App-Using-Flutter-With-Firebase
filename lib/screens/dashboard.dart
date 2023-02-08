@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emloyee_attendance_app/controller/dashboard_controller.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../model/attendance_model.dart';
+import '../controller/dashboard_controller.dart';
+
+
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({Key? key}) : super(key: key);
@@ -16,52 +19,7 @@ class DashBoardPage extends StatefulWidget {
 class _DashBoardPageState extends State<DashBoardPage> {
   var data = Get.arguments;
 
-  var isCheck = true;
-  String timeIn = '', timeOut = '';
-  bool isButtonClickable = true;
-  bool noButtonClickable = true;
-  var getInTime;
-  var getOutTime;
-
-  @override
-  void initState() {
-    super.initState();
-
-    getEventsList();
-  }
-
-  List<AttendanceModel> attendanceList = [];
-  DateTime _focusedDay = DateTime.now();
-
-  var currentDateTimeIn;
-  var currentDateTimeOut;
-
-  getEventsList() async {
-    CollectionReference attendance =
-        FirebaseFirestore.instance.collection('attendance');
-    QuerySnapshot querySnapshot = await attendance.get();
-
-    for (var element in querySnapshot.docs) {
-      AttendanceModel attendanceModel = AttendanceModel();
-      attendanceModel.date = element["Date"];
-      attendanceModel.timeIn = element["Time_In"];
-      attendanceModel.timeOut = element["Time_Out"];
-
-      setState(() {
-        attendanceList.add(attendanceModel);
-      });
-    }
-
-    var currentDate = _focusedDay.day.toString() +
-        DateFormat(' MMMM yyyy').format(_focusedDay);
-
-    currentDateTimeIn = attendanceList
-        .firstWhereOrNull((element) => element.date == currentDate)
-        ?.timeIn;
-    currentDateTimeOut = attendanceList
-        .firstWhereOrNull((element) => element.date == currentDate)
-        ?.timeOut;
-  }
+  final DashboardController controller = Get.put(DashboardController());
 
   @override
   Widget build(BuildContext context) {
@@ -115,11 +73,14 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         const Text(
                           'Time In',
                           style: TextStyle(fontSize: 22, color: Colors.black45),
-                        ), SizedBox(height: 5,),
-                        Text(
-                          currentDateTimeIn ?? "--/--",
-                          style: TextStyle(fontSize: 20),
                         ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Obx(() => Text(
+                          controller.timeIn.toString().isEmpty && controller.currentDateTimeIn.toString().isEmpty ? "--/--": controller.timeIn.toString(),
+                          style: TextStyle(fontSize: 20),
+                        ),)
                       ],
                     )),
                     Expanded(
@@ -131,11 +92,13 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           'Time Out',
                           style: TextStyle(fontSize: 22, color: Colors.black45),
                         ),
-                        SizedBox(height: 5,),
-                        Text(
-                          currentDateTimeOut ?? '--/--',
-                          style: TextStyle(fontSize: 20),
+                        SizedBox(
+                          height: 5,
                         ),
+                        Obx(() => Text(
+                          controller.currentDateTimeOut.toString().isEmpty  && controller.createEndTime().toString().isEmpty ? "--/--" :controller.timeOut.value,
+                          style: TextStyle(fontSize: 20),
+                        ),)
                       ],
                     )),
                   ],
@@ -176,21 +139,17 @@ class _DashBoardPageState extends State<DashBoardPage> {
             const SizedBox(height: 50.0),
             Center(
               child: InkWell(
-                onTap: noButtonClickable
+                onTap: controller.noButtonClickable
                     ? () {
-                        setState(() {
-                          noButtonClickable = false;
-                          createStartTime();
+                        controller.noButtonClickable = false;
+                        controller.createStartTime();
 
-                          getEventsList();
-                          Get.snackbar("Success", "Welcome ",
-                              snackPosition: SnackPosition.BOTTOM);
-                        });
+                        controller.getEventsList();
+                        Get.snackbar("Success", "Welcome ",backgroundColor: Colors.white,
+                            snackPosition: SnackPosition.BOTTOM);
                       }
                     : () {
-
-                        Get.snackbar("Sorry!", 'Only One Time Click');
-
+                        Get.snackbar("Sorry!", 'Only One Time Click',backgroundColor: Colors.white);
                       },
                 child: Container(
                   decoration: BoxDecoration(
@@ -216,30 +175,28 @@ class _DashBoardPageState extends State<DashBoardPage> {
             const SizedBox(height: 32.0),
             Center(
               child: InkWell(
-                onTap: isButtonClickable
+                onTap: controller.isButtonClickable
                     ? () {
-                        setState(() {
-                          createEndTime();
-                          isButtonClickable = false;
+                        controller.createEndTime();
+                        controller.isButtonClickable = false;
 
-                          getEventsList();
-                          Map<String, String> dataToSave = {
-                            'Time_In': timeIn,
-                            'Time_Out': timeOut.toString(),
-                            'Date': DateTime.now().day.toString() +
-                                DateFormat(' MMMM yyyy').format(DateTime.now()),
-                          };
+                        controller.getEventsList();
+                        Map<String, String> dataToSave = {
+                          'Time_In': controller.timeIn.toString(),
+                          'Time_Out': controller.timeOut.toString(),
+                          'Date': DateTime.now().day.toString() +
+                              DateFormat(' MMMM yyyy').format(DateTime.now()),
+                        };
 
-                          FirebaseFirestore.instance
-                              .collection("attendance")
-                              .add(dataToSave);
+                        FirebaseFirestore.instance
+                            .collection("attendance")
+                            .add(dataToSave);
 
-                          Get.snackbar("Success", "Good By ",
-                              snackPosition: SnackPosition.BOTTOM);
-                        });
+                        Get.snackbar("Success", "Good By ",backgroundColor: Colors.white,
+                            snackPosition: SnackPosition.BOTTOM);
                       }
                     : () {
-                        Get.snackbar("Sorry!", 'You Already Clicked ');
+                        Get.snackbar("Sorry!", 'You Already Clicked ',backgroundColor: Colors.white);
                       },
                 child: Container(
                   decoration: BoxDecoration(
@@ -266,17 +223,5 @@ class _DashBoardPageState extends State<DashBoardPage> {
         ),
       ),
     );
-  }
-
-  createStartTime() {
-    setState(() {
-      timeIn = DateFormat('hh:mm a').format(DateTime.now());
-    });
-  }
-
-  createEndTime() {
-    setState(() {
-      timeOut = DateFormat('hh:mm a').format(DateTime.now());
-    });
   }
 }
