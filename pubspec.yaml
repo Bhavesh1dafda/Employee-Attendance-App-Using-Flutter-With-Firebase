@@ -48,6 +48,8 @@ dependencies:
   syncfusion_flutter_datepicker: ^20.4.42
   image_picker: ^0.8.6
   file_picker: ^5.2.5
+  responsive_framework: ^0.2.0
+
 
 
 

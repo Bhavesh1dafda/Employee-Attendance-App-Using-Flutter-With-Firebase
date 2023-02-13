@@ -1,24 +1,23 @@
 import 'dart:core';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
 import '../model/attendance_model.dart';
 
 class DashboardController extends GetxController {
-  var isCheck = true;
-  var timeIn = ''.obs;
-  var timeOut = ''.obs;
-  bool isButtonClickable = true;
-  bool noButtonClickable = true;
+  final timeIn = "".obs;
+  final timeOut = "".obs;
+  RxBool isButtonClickable = true.obs;
+  RxBool noButtonClickable = true.obs;
 
   createStartTime() {
-    timeIn = DateFormat('hh:mm a').format(DateTime.now()).obs;
+    timeIn.value = DateFormat('hh:mm a').format(DateTime.now());
+    update();
   }
 
   createEndTime() {
-    timeOut = DateFormat('hh:mm a').format(DateTime.now()).obs;
+    timeOut.value = DateFormat('hh:mm a').format(DateTime.now());
+    update();
   }
 
   @override
@@ -45,7 +44,6 @@ class DashboardController extends GetxController {
       attendanceModel.date = element["Date"];
       attendanceModel.timeIn = element["Time_In"];
       attendanceModel.timeOut = element["Time_Out"];
-
       attendanceList.add(attendanceModel);
     }
 
@@ -55,6 +53,7 @@ class DashboardController extends GetxController {
     currentDateTimeIn = attendanceList
         .firstWhereOrNull((element) => element.date == currentDate)
         ?.timeIn;
+
     currentDateTimeOut = attendanceList
         .firstWhereOrNull((element) => element.date == currentDate)
         ?.timeOut;

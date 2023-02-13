@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../model/attendance_model.dart';
-import '../../model/eventmodel.dart';
 
 class ViewAllAttendance extends StatefulWidget {
   @override
@@ -39,8 +38,6 @@ class ViewAllAttendanceState extends State<ViewAllAttendance> {
         _focusedDay = focusedDay;
         getEventsList();
       });
-
-
     }
   }
 

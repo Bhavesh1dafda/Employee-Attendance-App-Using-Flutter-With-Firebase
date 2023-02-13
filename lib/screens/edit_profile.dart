@@ -100,7 +100,10 @@ class _EditProfileState extends State<EditProfile> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.more_vert),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Icon(Icons.more_vert),
+            ),
             color: Color(0xffFFFFFF),
             itemBuilder: (ctx) => [
               PopupMenuItem(

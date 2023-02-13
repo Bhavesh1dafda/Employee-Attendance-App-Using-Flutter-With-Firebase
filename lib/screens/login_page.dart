@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emloyee_attendance_app/screens/phon_auth.dart';
+import 'package:emloyee_attendance_app/screens/round.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,28 +76,35 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 30.0,
               ),
-              ElevatedButton(
-                onPressed: () async {
+              RoundButton(
+                onTap: () async {
                   final message = await AuthService().login(
                     email: _emailController.text,
                     password: _passwordController.text,
                   );
                   if (message!.contains('Success')) {
-                    sharedPreferences = await SharedPreferences.getInstance();
-                    sharedPreferences
-                        .setString('emloyeeId', _emailController.text)
-                        .then(
-                          (value) => Get.toNamed(AppRoute.Homepage, arguments: [
-                            {
-                              "1": _emailController.text,
-                            },
-                          ]),
-                        );
+                    SharedPreferences pref =
+                        await SharedPreferences.getInstance();
+                    pref.setString("email", _emailController.text);
+                    Get.toNamed(AppRoute.Homepage, arguments: [
+                      {
+                        "1": _emailController.text,
+                      },
+                    ]);
                   } else {
                     Get.snackbar('Error', 'Enter Valid Email OR Password');
                   }
                 },
-                child: const Text('Login'),
+                title: 'Login',
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              RoundButton(
+                onTap: () {
+                  Get.to(LoginWithPhoneNumber());
+                },
+                title: 'Log In With Phone ?',
               ),
             ],
           ),
